@@ -37,25 +37,38 @@ async function storageCart() {
     let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
     if (response.ok) {
         let data = await response.json();
-        // data recuperer de l'utilisateur pour le localStorage
-        let cartProduct = {
-            nameProduct: data.name,
-            idProduct: urlId,
-            quantityProduct: document.querySelector('#quantity').value,
-            colorProduct: posColor.value,
-        }
-        // console.log(cartProduct);
-
-        // data envoyer dans le locastorage
-        let pushProduct = [
-            localStorage.setItem('id', cartProduct.idProduct),
-            localStorage.setItem('name', cartProduct.nameProduct),
-            localStorage.setItem('quantity', cartProduct.quantityProduct),
-            localStorage.setItem('color', cartProduct.colorProduct),
-        ]
 
         const btnAddCart = document.querySelector('#addToCart');
-        localstorage.addEventListenerlistener('Click', btnAddCart);
+        btnAddCart.addEventListener("click", () => {
+           
+          // data envoyer dans le localstorage */
+            // data recuperer de l'utilisateur pour le localStorage
+            let cartProduct = {
+                nameProduct: data.name,
+                idProduct: urlId,
+                quantityProduct: document.querySelector('#quantity').value,
+                colorProduct: posColor.addEventListener.value
+            };
+            // console.log(cartProduct);
+            /* if (cartProduct.quantityProduct < 0 || cartProduct.colorProduct == null) {
+                alert('Veuillez entrez une quantité ou une couleur')
+            } else { 
+            */
+            function addProductStorage() {
+                return localStorage.setItem("Item", JSON.stringify(cartProduct));
+            }
+            addProductStorage();
+            /*  
+             let productsInLocalStorage = JSON.parse(localStorage.getItem('Item'));
+             console.log(productsInLocalStorage);
+ 
+             productsInLocalStorage = [];
+             productsInLocalStorage.push(cartProduct); 
+             localStorage.setItem("Item",JSON.stringify(productsInLocalStorage));
+             console.log(productsInLocalStorage);
+             // } */
+        });
+
 
     } else {
         console.error('Un probléme est survenu, retour du serveur: ', response.status)
@@ -64,13 +77,7 @@ async function storageCart() {
 
 storageCart();
 
-/* 
-async function saveCart() {
-    if (quantityProduct == 0 || colorProduct == null) {
-        alert('Veuillez entrez une quantité ou une couleur')
-    } else {
-        // bouton ajouter au panier
- */
+
 
 
 
