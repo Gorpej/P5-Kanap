@@ -6,7 +6,8 @@ const showItems = async function () {
   let response = await fetch("http://localhost:3000/api/products/");
       if (response.ok) {
        let data = await response.json()
-        // console.log(data)
+        // console.log(typeof(data));
+       
         for (product of data) {
           linkItem.innerHTML +=
             `<a href="./product.html?id=${product._id}">

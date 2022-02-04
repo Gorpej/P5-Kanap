@@ -33,40 +33,73 @@ showProduct();
 
 //------------------------------------------------Panier------------------------------------------------//
 
-async function storageCart() {
+async function populateStorage() {
     let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
     if (response.ok) {
         let data = await response.json();
 
         const btnAddCart = document.querySelector('#addToCart');
         btnAddCart.addEventListener("click", () => {
-           
-          // data envoyer dans le localstorage */
+
+
             // data recuperer de l'utilisateur pour le localStorage
+
             let cartProduct = {
                 nameProduct: data.name,
                 idProduct: urlId,
                 quantityProduct: document.querySelector('#quantity').value,
-                colorProduct: posColor.addEventListener.value
+                colorProduct: posColor.value
             };
-            // console.log(cartProduct);
-            /* if (cartProduct.quantityProduct < 0 || cartProduct.colorProduct == null) {
-                alert('Veuillez entrez une quantité ou une couleur')
-            } else { 
-            */
-            function addProductStorage() {
-                return localStorage.setItem("Item", JSON.stringify(cartProduct));
+
+            // si l'utilisateur ne rentre pas de couleur ou de quantité
+            if (cartProduct.quantityProduct <= 0 || cartProduct.colorProduct == "") {
+
+                alert('Veuillez entrez une quantité et une couleur')
+            } else {
+
+                // data envoyer dans le localstorage
+                function addProductStorage() {
+                    let carts = JSON.parse(localStorage.getItem('Carts')) || [];
+                    carts.push(cartProduct);
+                    localStorage.setItem('Carts', JSON.stringify(carts));
+
+                    let cart;
+
+                    for (cart of carts) {
+
+                    }
+                    let cartId = cart.idProduct;
+                    let cartColor = cart.colorProduct;
+                    console.log(cart)
+                    console.log(cart.idProduct)
+                    console.log(cart.indexOf(cartId) !== -1)
+
+                    // Vérifie si la valeur existe dans le tableau
+                    // if(colors.indexOf("Green") !== -1){
+                    
+
+                    if (cart.idProduct == cart.idProduct && cart.colorProduct == cart.colorProduct) {
+                        // ajout d'un nouveau produit
+
+
+
+
+
+
+
+                        console.log('envoi')
+                    } else {
+                        //     //addition des quantités
+                        // localStorage.removeItem('Carts', carts.quantityProduct)
+
+                        console.log('good')
+                    }
+                }
+
+                addProductStorage();
+
             }
-            addProductStorage();
-            /*  
-             let productsInLocalStorage = JSON.parse(localStorage.getItem('Item'));
-             console.log(productsInLocalStorage);
- 
-             productsInLocalStorage = [];
-             productsInLocalStorage.push(cartProduct); 
-             localStorage.setItem("Item",JSON.stringify(productsInLocalStorage));
-             console.log(productsInLocalStorage);
-             // } */
+
         });
 
 
@@ -75,7 +108,7 @@ async function storageCart() {
     }
 }
 
-storageCart();
+populateStorage();
 
 
 
