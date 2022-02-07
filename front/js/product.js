@@ -1,6 +1,5 @@
 // Url searchparams pour selectionner l'id de chaque canapé
 let urlId = new URL(location.href).searchParams.get('id');
-//
 
 let itemImg = document.querySelector('.item__img');
 let title = document.querySelector('#title');
@@ -14,12 +13,12 @@ async function showProduct() {
     let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
     if (response.ok) {
         let data = await response.json();
-        // console.log(data)
+// console.log(data)
         itemImg.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
         title.innerHTML = data.name;
         price.innerHTML = data.price;
         description.innerHTML = data.description;
-        // parcourir array colors dans l api
+// parcourir array colors dans l api
         for (data.color of data.colors) {
             posColor.innerHTML += `<option value="${data.color}">${data.color}</option>`;
 
@@ -42,68 +41,56 @@ async function populateStorage() {
         btnAddCart.addEventListener("click", () => {
 
 
-            // data recuperer de l'utilisateur pour le localStorage
+// data recuperer de l'utilisateur pour le localStorage
 
             let cartProduct = {
-                nameProduct: data.name,
-                idProduct: urlId,
-                quantityProduct: document.querySelector('#quantity').value,
-                colorProduct: posColor.value
+                name: data.name,
+                id: urlId,
+                quantity: document.querySelector('#quantity').value,
+                color: posColor.value
             };
 
-            // si l'utilisateur ne rentre pas de couleur ou de quantité
-            if (cartProduct.quantityProduct <= 0 || cartProduct.colorProduct == "") {
+
+// si l'utilisateur ne rentre pas de couleur ou de quantité
+            if (cartProduct.quantity <= 0 || cartProduct.color == "") {
 
                 alert('Veuillez entrez une quantité et une couleur')
             } else {
 
-                // data envoyer dans le localstorage
+// creation d'un tableau panier pour y stocker les produits
+                let cart = JSON.parse(localStorage.getItem('Cart')) || [];
+                console.log(cart);
+
+// Envoyer les données recuperer dans le tableau Panier dans le localstorage avec conditions, si le produit est déja dans le panier changer la quantité
                 function addProductStorage() {
-                    let carts = JSON.parse(localStorage.getItem('Carts')) || [];
-                    carts.push(cartProduct);
-                    localStorage.setItem('Carts', JSON.stringify(carts));
-
-                    let cart;
-
-                    for (cart of carts) {
-
+                    let cartItem = {};
+                    for (cartItem of cart) {
                     }
-                    let cartId = cart.idProduct;
-                    let cartColor = cart.colorProduct;
-                    console.log(cart)
-                    console.log(cart.idProduct)
-                    console.log(cart.indexOf(cartId) !== -1)
+                   
+                    if (cartProduct.id === cartItem.id && cartProduct.color === cartItem.color) {
 
-                    // Vérifie si la valeur existe dans le tableau
-                    // if(colors.indexOf("Green") !== -1){
-                    
-
-                    if (cart.idProduct == cart.idProduct && cart.colorProduct == cart.colorProduct) {
-                        // ajout d'un nouveau produit
-
-
-
-
-
-
-
-                        console.log('envoi')
+                        console.log("le produit existe deja ");
+                        JSON.parse(localStorage.getItem('Cart'));
+                        addQuantity = parseInt(cartItem.quantity) + parseInt(cartProduct.quantity); 
+                        cartItem.quantity = addQuantity;
+                        // console.log(cart);
+                        localStorage.setItem('Cart', JSON.stringify(cart));
+                        
                     } else {
-                        //     //addition des quantités
-                        // localStorage.removeItem('Carts', carts.quantityProduct)
 
-                        console.log('good')
+                        console.log("le produit n'existe PAS, j'ajoute dans le locale storage");
+                        cart.push(cartProduct);
+                        localStorage.setItem('Cart', JSON.stringify(cart));
+
                     }
                 }
-
                 addProductStorage();
-
             }
-
         });
 
 
     } else {
+        // en cas d'erreur liée à un probleme avec le serveur
         console.error('Un probléme est survenu, retour du serveur: ', response.status)
     }
 }
