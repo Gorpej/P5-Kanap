@@ -38,8 +38,6 @@ async function populateStorage() {
 
         const btnAddCart = document.querySelector('#addToCart');
         btnAddCart.addEventListener("click", () => {
-
-
             // data recuperer de l'utilisateur pour le localStorage
 
             let cartProduct = {
@@ -48,7 +46,6 @@ async function populateStorage() {
                 quantity: parseInt(document.querySelector('#quantity').value),
                 color: posColor.value
             };
-
 
             // si l'utilisateur ne rentre pas de couleur ou de quantité
             if (cartProduct.quantity <= 0 || cartProduct.color == "") {
@@ -59,7 +56,6 @@ async function populateStorage() {
                 addProductStorage(cartProduct);
             }
         });
-
 
     } else {
         // en cas d'erreur liée à un probleme avec le serveur
@@ -80,22 +76,16 @@ populateStorage();
         for (let i = 0; i < cart.length; i++) {
 
             if (cartProduct.id === cart[i].id && cartProduct.color === cart[i].color) {
-
-                console.log("le produit existe deja ");
+                // console.log("le produit existe deja ");
                 cart[i].quantity += cartProduct.quantity;
                 // console.log(cart);
                 localStorage.setItem('Cart', JSON.stringify(cart));
                 return;
             }
         }
-
-
-        console.log("le produit n'existe PAS, j'ajoute dans le locale storage");
+        // console.log("le produit n'existe PAS, j'ajoute dans le locale storage");
         cart.push(cartProduct);
         localStorage.setItem('Cart', JSON.stringify(cart));
-
-
-
     }
 
 
