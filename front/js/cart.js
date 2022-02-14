@@ -1,31 +1,40 @@
-const cartSelectItem = document.querySelector('#cart__items');
+let cartSelectItem = document.querySelector('#cart__items');
+let totalQuantity = document.querySelector('#totalQuantity');
+let totalPrice = document.querySelector('#totalPrice');
 let cart = JSON.parse(localStorage.getItem('Cart') || []);
-const totalQuantity = document.querySelector('#totalQuantity');
-const totalPrice = document.querySelector('#totalPrice');
-// const firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-
 let quantityTotal = [];
 let priceTotal = [];
+// let modifQuantity = document.getElementsByClassName('.itemQuantity');
+// let deleteItem = document.getElementsByClassName('deleteItem');
+// let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
 
+addInsertCart();
+addQuantity(quantityTotal);
+addPrice(priceTotal);
+
+console.log(quantityTotal);
+console.log(priceTotal);
+
+// récupére le detail du panier du localStorage un par un.
 function addInsertCart() {
   for (let i = 0; i < cart.length; i++) {
     quantityTotal.push(cart[i].quantity)
-    price.push(data.price);
-    apiCall(i);
+    apiCall(i); 
+    
   }
- 
-  addQuantity(quantityTotal);
-  addPrice(priceTotal);
 }
 
-addInsertCart();
-
+// Appel de l'API avec insertion des donnees du localStorage et de l'API
 async function apiCall(i) {
   let response = await fetch(`http://localhost:3000/api/products/${cart[i].id}/`);
   if (response.ok) {
-    let data = await response.json()
-    
-   
+    let data = await response.json();
+
+    // multiplication de la quantité récuperée dans le localstorage par le prix récuperé dans l'API
+
+    let resultPrice = cart[i].quantity * data.price;
+    priceTotal.push(resultPrice);
+
     cartSelectItem.innerHTML +=
       `<article class="cart__item" data-id="${data.id}" data-color="${cart[i].color}">
            <div class="cart__item__img">
@@ -49,28 +58,34 @@ async function apiCall(i) {
            </div>
        </article>`;
 
-
-
-
   } else {
-    console.log("erreur serveur");
+    console.error('Un probléme est survenu, retour du serveur: ', response.status)
   }
 }
 
-// function addQuantity()
-
-// totalPrice.innerHTML +=  "25";
-
-function addQuantity(arr) {
-  const reducer = (previousValue, currentValue) => previousValue + currentValue;
-  let result = arr.reduce(reducer, 0);
-  console.log(result)
-  let showQuantity = totalQuantity.innerHTML += `${result}`;
+function addQuantity(array) {
+  const initialValue = 0;
+  const sumWithInitial = array.reduce((previousValue, currentValue) => previousValue + currentValue, initialValue);
+  console.log(sumWithInitial)
+  totalQuantity.innerHTML += `${sumWithInitial}`;
 }
 
-function addPrice(arr) {
-  const reducer = (previousValue, currentValue) => previousValue + currentValue;
-  let result = arr.reduce(reducer, 0);
-  console.log(result)
-  let showPrice = totalPrice.innerHTML += `${result}`;
+function addPrice(array) {
+  const initialValue = 0;
+  const sumWithInitial = array.reduce((previousValue, currentValue) => previousValue + currentValue, initialValue);
+  console.log(sumWithInitial);
+  totalPrice.innerHTML += `${sumWithInitial}`;
 }
+
+
+// function modQuantity() {
+//   if (modifQuantity.value >= 1 || modifQuantity.value < 100) {
+// localStorage.setItem('Cart', JSON.stringify(cart));
+//   }
+// }
+
+// let test = modifQuantity.closest('value');
+// console.log(test);
+// console.log(modifQuantity);
+
+// modQuantity();

@@ -13,11 +13,13 @@ async function showProduct() {
     let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
     if (response.ok) {
         let data = await response.json();
+
         // console.log(data)
         itemImg.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
         title.innerHTML = data.name;
         price.innerHTML = data.price;
         description.innerHTML = data.description;
+
         // parcourir array colors dans l api
         for (data.color of data.colors) {
             posColor.innerHTML += `<option value="${data.color}">${data.color}</option>`;
@@ -28,7 +30,6 @@ async function showProduct() {
     }
 }
 showProduct();
-
 //------------------------------------------------Panier------------------------------------------------//
 
 async function populateStorage() {
@@ -38,8 +39,8 @@ async function populateStorage() {
 
         const btnAddCart = document.querySelector('#addToCart');
         btnAddCart.addEventListener("click", () => {
-            // data recuperer de l'utilisateur pour le localStorage
 
+            // data recuperer de l'utilisateur pour le localStorage
             let cartProduct = {
                 name: data.name,
                 id: urlId,
