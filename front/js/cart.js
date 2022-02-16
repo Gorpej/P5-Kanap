@@ -14,9 +14,8 @@ addInsertCart();
 selectTotalQuantity.innerHTML = quantityTotal;
 
 // récupére le detail du panier du localStorage un par un.
-function addInsertCart(cartITem) {
+function addInsertCart() {
   for (let i = 0; i < cart.length; i++) {
-
     quantityTotal += cart[i].quantity;
     apiCall(i);
 
@@ -59,28 +58,25 @@ async function apiCall(i) {
     selectTotalPrice.innerHTML = priceTotal;
 
     function modQuantity() {
+
       for (let input of mQuantity) {
-        return input
-}
+
         input.addEventListener('change', event => {
-          console.log(event)
           let articleId = event.target.closest("article").dataset.id;
           let articleColor = event.target.closest("article").dataset.color;
           let modifyQuantity = parseInt(input.value);
-
+          console.log(cart[i])
           if (cart[i].id === articleId && cart[i].color === articleColor) {
             cart[i].quantity = modifyQuantity;
             localStorage.setItem('Cart', JSON.stringify(cart));
-
           }
         })
-      
+      }
     }
 
     function deleteItem() {
       for (let itemDel of deleteItemSelect) {
-        
-        console.log(itemDel)
+
         itemDel.addEventListener('click', event => {
           console.log(event)
           // let articleId = event.target.closest("article").dataset.id;
