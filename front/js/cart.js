@@ -3,7 +3,7 @@ let selectTotalQuantity = document.querySelector('#totalQuantity');
 let selectTotalPrice = document.querySelector('#totalPrice');
 let cart = JSON.parse(localStorage.getItem('Cart') || []);
 let mQuantity = document.getElementsByClassName('itemQuantity');
-let deleteItemSelect = document.getElementsByClassName('deleteItem');
+
 let quantityTotal = 0;
 let priceTotal = 0;
 let cartItem;
@@ -11,14 +11,15 @@ let cartItem;
 // let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
 
 addInsertCart();
-selectTotalQuantity.innerHTML = quantityTotal;
 
 // récupére le detail du panier du localStorage un par un.
-function addInsertCart() {
+async function addInsertCart() {
   for (let i = 0; i < cart.length; i++) {
     quantityTotal += cart[i].quantity;
-    apiCall(i);
+    await apiCall(i);
 
+    modQuantity();
+    deleteItem();
   }
 }
 
@@ -56,47 +57,49 @@ async function apiCall(i) {
     let resultPrice = cart[i].quantity * data.price;
     priceTotal += resultPrice;
     selectTotalPrice.innerHTML = priceTotal;
-
-    function modQuantity() {
-
-      for (let input of mQuantity) {
-
-        input.addEventListener('change', event => {
-          let articleId = event.target.closest("article").dataset.id;
-          let articleColor = event.target.closest("article").dataset.color;
-          let modifyQuantity = parseInt(input.value);
-          console.log(cart[i])
-          if (cart[i].id === articleId && cart[i].color === articleColor) {
-            cart[i].quantity = modifyQuantity;
-            localStorage.setItem('Cart', JSON.stringify(cart));
-          }
-        })
-      }
-    }
-
-    function deleteItem() {
-      for (let itemDel of deleteItemSelect) {
-
-        itemDel.addEventListener('click', event => {
-          console.log(event)
-          // let articleId = event.target.closest("article").dataset.id;
-          // let articleColor = event.target.closest("article").dataset.color;
-          //  if (cart[i].id === articleId && cart[i].color === articleColor) {
-
-          //   let test = cart.splice(cart.indexOf(event), 1);
-          // localStorage.setItem('Cart', JSON.stringify(cart));
-          console.log(cart[i].id)
-
-          // }
-        })
-      }
-    }
-    // deleteItem();
-    modQuantity();
+    selectTotalQuantity.innerHTML = quantityTotal;
 
 
   } else {
     console.error('Un probléme est survenu, retour du serveur: ', response.status)
+  }
+}
+
+
+function modQuantity() {
+
+  for (let i = 0; i < cart.length; i++) {
+
+    for (let input of mQuantity) {
+
+      input.addEventListener('change', event => {
+        let articleId = event.target.closest("article").dataset.id;
+        let articleColor = event.target.closest("article").dataset.color;
+        let modifyQuantity = parseInt(input.value);
+        if (cart[i].id === articleId && cart[i].color === articleColor) {
+          cart[i].quantity = modifyQuantity;
+          localStorage.setItem('Cart', JSON.stringify(cart));
+        }
+      })
+    }
+  }
+}
+
+
+function deleteItem() {
+  let deleteItems = document.querySelectorAll('.deleteItem');
+
+  for (let deleteIt of deleteItems) {
+    deleteIt.addEventListener('click', event => {
+      let articleId = event.target.closest("article").dataset.id;
+      let articleColor = event.target.closest("article").dataset.color;
+      let newCart = cart.filter(el => el.id != articleId || el.color != articleColor);
+
+      localStorage.setItem('Cart', JSON.stringify(newCart));
+      if (cart.length === 0) {
+        localStorage.removeItem('cart', cart)
+      }
+    })
   }
 }
 
