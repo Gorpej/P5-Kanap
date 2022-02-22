@@ -1,26 +1,21 @@
-// Url searchparams pour selectionner l'id de chaque canapé
 let urlId = new URL(location.href).searchParams.get('id');
-
 let itemImg = document.querySelector('.item__img');
 let title = document.querySelector('#title');
 let price = document.querySelector('#price');
 let description = document.querySelector('#description');
 let posColor = document.querySelector('#colors');
 
-// Promesse API
-
+// Récuperation des données de l'api du canapé selectionner à l'aide de urlId
 async function showProduct() {
     let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
     if (response.ok) {
         let data = await response.json();
-
-        // console.log(data)
+        // insertion des données dans l'HTML
         itemImg.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
         title.innerHTML = data.name;
         price.innerHTML = data.price;
         description.innerHTML = data.description;
 
-        // parcourir array colors dans l api
         for (data.color of data.colors) {
             posColor.innerHTML += `<option value="${data.color}">${data.color}</option>`;
         }
@@ -30,6 +25,7 @@ async function showProduct() {
     }
 }
 showProduct();
+
 //------------------------------------------------Panier------------------------------------------------//
 
 async function populateStorage() {
@@ -67,7 +63,8 @@ async function populateStorage() {
 populateStorage();
 
 
-    // Envoyer les données recuperer dans le tableau Panier dans le localstorage avec conditions, si le produit est déja dans le panier changer la quantité
+    // Envoyer les données recuperer dans le tableau Panier dans le localstorage avec conditions,
+    // si le produit est déja dans le panier changer la quantité.
     function addProductStorage(cartProduct) {
 
          // creation d'un tableau panier pour y stocker les produits

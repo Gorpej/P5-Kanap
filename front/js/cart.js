@@ -59,10 +59,9 @@ async function apiCall(i) {
   }
 }
 
+//fonction qui sert a modifier la quantitée dans le panier
 function modQuantity() {
-
   for (let input of mQuantity) {
-
     input.addEventListener('change', event => {
       let articleId = event.target.closest("article").dataset.id;
       let articleColor = event.target.closest("article").dataset.color;
@@ -77,7 +76,7 @@ function modQuantity() {
     })
   }
 }
-
+// fonction qui sert à supprimer un produit du panier 
 function deleteItem() {
   let deleteItems = document.querySelectorAll('.deleteItem');
 
@@ -198,13 +197,12 @@ email.addEventListener("change", () => {
   checkEmail(this);
 });
 
-// Verifie que tout les champs sont valide lorsque l'utilisateur clique sur le bouton commande 
-
+// Verifie que tout les champs sont valide lorsque l'utilisateur clique sur le bouton commande
 let order = document.querySelector('#order');
 order.addEventListener("click", (e) => {
-  // e.preventDefault();
+  e.preventDefault();
   if (checkFirstName(firstName) && checklastName(lastName) && checkAddress(address) && checkCity(city) && checkEmail(email)) {
-    // valide
+    // creer un objet contact avec les information recuperer a l'aide du formulaire
     let contact = {
       firstName: firstName.value,
       lastName: lastName.value,
@@ -212,10 +210,12 @@ order.addEventListener("click", (e) => {
       city: city.value,
       email: email.value
     };
+    // creer un tableau products et parcourir le locastorage pour extraire l'id.
     let products = [];
     for (let i = 0; i < cart.length; i++) {
       products.push(cart[i].id);
     }
+    // Execution de la fonction api POST avec comme paramètres contact et products
     apiPost({
       contact,
       products
@@ -225,7 +225,7 @@ order.addEventListener("click", (e) => {
   }
 
 });
-
+ // Envoi les données contact et products à l'aide de la methode POST
 async function apiPost(contact, products) {
   let res = await fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -236,6 +236,7 @@ async function apiPost(contact, products) {
   });
   if (res.ok) {
     let datas = await res.json();
+    // envoie de l'oderId vers la page confirmation 
     document.location.href = ("confirmation.html?orderId=" + datas.orderId);
 
   } else {
