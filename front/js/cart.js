@@ -54,7 +54,6 @@ async function apiCall(i) {
     priceTotal += resultPrice;
     selectTotalPrice.innerHTML = priceTotal;
     selectTotalQuantity.innerHTML = quantityTotal;
-
   } else {
     console.error('Un probléme est survenu, retour du serveur: ', response.status)
   }
@@ -200,9 +199,10 @@ email.addEventListener("change", () => {
 });
 
 // Verifie que tout les champs sont valide lorsque l'utilisateur clique sur le bouton commande 
+
 let order = document.querySelector('#order');
 order.addEventListener("click", (e) => {
-  e.preventDefault();
+  // e.preventDefault();
   if (checkFirstName(firstName) && checklastName(lastName) && checkAddress(address) && checkCity(city) && checkEmail(email)) {
     // valide
     let contact = {
@@ -217,33 +217,32 @@ order.addEventListener("click", (e) => {
       products.push(cart[i].id);
     }
     apiPost({
-    contact,
-    products
+      contact,
+      products
     });
-    
   } else {
     // pas valide
   }
-  
+
 });
 
-async function apiPost(contact,products) {
-  let response = await fetch("http://localhost:3000/api/products/order", {
+async function apiPost(contact, products) {
+  let res = await fetch("http://localhost:3000/api/products/order", {
     method: "POST",
-    body: JSON.stringify(contact,products),
+    body: JSON.stringify(contact, products),
     headers: {
       'Content-Type': 'application/json',
     },
   });
-  if (response.ok) {
-    let data = await response.json();
-  
-    document.location.href = ("confirmation.html?orderId=" + data.orderId);
-  } else {
-    console.error('Un probléme est survenu, retour du serveur: ', response.status)
-  }
-}
+  if (res.ok) {
+    let datas = await res.json();
+    document.location.href = ("confirmation.html?orderId=" + datas.orderId);
 
+  } else {
+    console.error('Un probléme est survenu, retour du serveur: ', res.status)
+  }
+
+}
 
 
 
