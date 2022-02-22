@@ -3,7 +3,6 @@ let selectTotalQuantity = document.querySelector('#totalQuantity');
 let selectTotalPrice = document.querySelector('#totalPrice');
 let cart = JSON.parse(localStorage.getItem('Cart') || []);
 let mQuantity = document.getElementsByClassName('itemQuantity');
-
 let quantityTotal = 0;
 let priceTotal = 0;
 let cartItem;
@@ -68,22 +67,23 @@ async function apiCall(i) {
 
 function modQuantity() {
 
-  for (let i = 0; i < cart.length; i++) {
+  for (let input of mQuantity) {
 
-    for (let input of mQuantity) {
-
-      input.addEventListener('change', event => {
-        let articleId = event.target.closest("article").dataset.id;
-        let articleColor = event.target.closest("article").dataset.color;
-        let modifyQuantity = parseInt(input.value);
+    input.addEventListener('change', event => {
+      let articleId = event.target.closest("article").dataset.id;
+      let articleColor = event.target.closest("article").dataset.color;
+      let modifyQuantity = parseInt(input.value);
+      for (let i = 0; i < cart.length; i++) {
         if (cart[i].id === articleId && cart[i].color === articleColor) {
           cart[i].quantity = modifyQuantity;
           localStorage.setItem('Cart', JSON.stringify(cart));
+          return;
         }
-      })
-    }
+      }
+    })
   }
 }
+
 
 
 function deleteItem() {
@@ -93,10 +93,12 @@ function deleteItem() {
     deleteIt.addEventListener('click', event => {
       let articleId = event.target.closest("article").dataset.id;
       let articleColor = event.target.closest("article").dataset.color;
+
       let newCart = cart.filter(el => el.id != articleId || el.color != articleColor);
       cart = newCart;
 
       localStorage.setItem('Cart', JSON.stringify(cart));
+      event.target.closest("article").remove();
 
     })
   }
@@ -133,7 +135,7 @@ function checklastName() {
 function checkAddress() {
   let addressRegExp = new RegExp("^[A-Za-z0-9 \é\è\ê\-]+$");
   if (addressRegExp.test(address.value)) {
-    emailErrorMsg.innerHTML = "";
+    addressErrorMsg.innerHTML = "";
     return true;
   } else {
     addressErrorMsg.innerHTML = "Veuillez entrer une adresse valide";
@@ -145,7 +147,7 @@ function checkAddress() {
 function checkCity() {
   let cityRegExp = new RegExp("^[A-Za-z \é\è\ê\-]+$");
   if (cityRegExp.test(city.value)) {
-    emailErrorMsg.innerHTML = "";
+    cityErrorMsg.innerHTML = "";
     return true;
   } else {
     cityErrorMsg.innerHTML = "Veuillez entrer une ville valide";
@@ -209,10 +211,48 @@ email.addEventListener("change", () => {
 let order = document.querySelector('#order');
 order.addEventListener("click", (e) => {
   e.preventDefault();
-  if(checkEmail(email)&& checkCity(city)&& checkAddress(address)&& checklastName(lastName)&& checkFirstName(firstName)){
+  if (checkEmail(email) && checkCity(city) && checkAddress(address) && checklastName(lastName) && checkFirstName(firstName)) {
     console.log('valide')
-  }else{
-    console.log('pas valide')
+    let contact = {
+      firstName: firstName.value,
+      lastName: lastName.value,
+      address: address.value,
+      city: city.value,
+      email: email.value
+    };
+    let products = [];
+    for (let i = 0; i < cart.length; i++) {
+      products.push(cart[i].id);
+    }
+
+    apiPost({
+    contact,
+    products
+    });
+
+  } else {
+    console.log('pas valide');
   }
 });
+async function apiPost(contact,products) {
+  let response = await fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(contact,products),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (response.ok) {
+    let data = await response.json();
+    console.log(data)
+
+  } else {
+    console.error('Un probléme est survenu, retour du serveur: ', response.status)
+  }
+
+
+}
+
+
+
 
