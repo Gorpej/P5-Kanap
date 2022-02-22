@@ -5,9 +5,6 @@ let cart = JSON.parse(localStorage.getItem('Cart') || []);
 let mQuantity = document.getElementsByClassName('itemQuantity');
 let quantityTotal = 0;
 let priceTotal = 0;
-let cartItem;
-
-
 
 addInsertCart();
 
@@ -58,12 +55,10 @@ async function apiCall(i) {
     selectTotalPrice.innerHTML = priceTotal;
     selectTotalQuantity.innerHTML = quantityTotal;
 
-
   } else {
     console.error('Un probléme est survenu, retour du serveur: ', response.status)
   }
 }
-
 
 function modQuantity() {
 
@@ -84,8 +79,6 @@ function modQuantity() {
   }
 }
 
-
-
 function deleteItem() {
   let deleteItems = document.querySelectorAll('.deleteItem');
 
@@ -103,7 +96,6 @@ function deleteItem() {
     })
   }
 }
-
 
 //----------------------------------------------------------Formulaire----------------------------------------------------------------//
 
@@ -211,8 +203,8 @@ email.addEventListener("change", () => {
 let order = document.querySelector('#order');
 order.addEventListener("click", (e) => {
   e.preventDefault();
-  if (checkEmail(email) && checkCity(city) && checkAddress(address) && checklastName(lastName) && checkFirstName(firstName)) {
-    console.log('valide')
+  if (checkFirstName(firstName) && checklastName(lastName) && checkAddress(address) && checkCity(city) && checkEmail(email)) {
+    // valide
     let contact = {
       firstName: firstName.value,
       lastName: lastName.value,
@@ -224,16 +216,17 @@ order.addEventListener("click", (e) => {
     for (let i = 0; i < cart.length; i++) {
       products.push(cart[i].id);
     }
-
     apiPost({
     contact,
     products
     });
-
+    
   } else {
-    console.log('pas valide');
+    // pas valide
   }
+  
 });
+
 async function apiPost(contact,products) {
   let response = await fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -244,13 +237,11 @@ async function apiPost(contact,products) {
   });
   if (response.ok) {
     let data = await response.json();
-    console.log(data)
-
+  
+    document.location.href = ("confirmation.html?orderId=" + data.orderId);
   } else {
     console.error('Un probléme est survenu, retour du serveur: ', response.status)
   }
-
-
 }
 
 
