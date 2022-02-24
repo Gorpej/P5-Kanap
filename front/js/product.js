@@ -20,6 +20,7 @@ async function showProduct() {
             posColor.innerHTML += `<option value="${data.color}">${data.color}</option>`;
         }
 
+        populateStorage(data);
     } else {
         console.error('Un probléme est survenu, retour du serveur: ', response.status)
     }
@@ -28,63 +29,51 @@ showProduct();
 
 //------------------------------------------------Panier------------------------------------------------//
 
-async function populateStorage() {
-    let response = await fetch(`http://localhost:3000/api/products/${urlId}`);
-    if (response.ok) {
-        let data = await response.json();
+//ajouter la quantité, couleur, nom, id dans le localStorage 
+function populateStorage(data) {
+    const btnAddCart = document.querySelector('#addToCart');
+    btnAddCart.addEventListener("click", () => {
 
-        const btnAddCart = document.querySelector('#addToCart');
-        btnAddCart.addEventListener("click", () => {
+        // data recuperé de l'utilisateur pour le localStorage
+        let cartProduct = {
+            name: data.name,
+            id: urlId,
+            quantity: parseInt(document.querySelector('#quantity').value),
+            color: posColor.value
+        };
 
-            // data recuperer de l'utilisateur pour le localStorage
-            let cartProduct = {
-                name: data.name,
-                id: urlId,
-                quantity: parseInt(document.querySelector('#quantity').value),
-                color: posColor.value
-            };
+        // si l'utilisateur ne rentre pas de couleur ou de quantité non valide
+        if (cartProduct.quantity <= 0 || cartProduct.quantity > 100 || cartProduct.color == "") {
+            alert('Veuillez entrez une quantité de 1 à 100 et une couleur')
+        } else {
 
-            // si l'utilisateur ne rentre pas de couleur ou de quantité
-            if (cartProduct.quantity <= 0 || cartProduct.color == "") {
-
-                alert('Veuillez entrez une quantité et une couleur')
-            } else {
-
-                addProductStorage(cartProduct);
-            }
-        });
-
-    } else {
-        // en cas d'erreur liée à un probleme avec le serveur
-        console.error('Un probléme est survenu, retour du serveur: ', response.status)
-    }
+            addProductStorage(cartProduct);
+        }
+    });
 }
 
-populateStorage();
+// Envoyer les données recuperer dans le tableau Panier dans le localstorage avec conditions,
+// si le produit est déja dans le panier changer la quantité.
+function addProductStorage(cartProduct) {
 
+    // creation d'un tableau panier pour y stocker les produits
+    let cart = JSON.parse(localStorage.getItem('Cart')) || [];
+    console.log(cart);
 
-    // Envoyer les données recuperer dans le tableau Panier dans le localstorage avec conditions,
-    // si le produit est déja dans le panier changer la quantité.
-    function addProductStorage(cartProduct) {
+    for (let i = 0; i < cart.length; i++) {
 
-         // creation d'un tableau panier pour y stocker les produits
-         let cart = JSON.parse(localStorage.getItem('Cart')) || [];
-         console.log(cart);
-
-        for (let i = 0; i < cart.length; i++) {
-
-            if (cartProduct.id === cart[i].id && cartProduct.color === cart[i].color) {
-                // console.log("le produit existe deja ");
-                cart[i].quantity += cartProduct.quantity;
-                // console.log(cart);
-                localStorage.setItem('Cart', JSON.stringify(cart));
-                return;
-            }
+        if (cartProduct.id === cart[i].id && cartProduct.color === cart[i].color) {
+            // console.log("le produit existe deja ");
+            cart[i].quantity += cartProduct.quantity;
+            // console.log(cart);
+            localStorage.setItem('Cart', JSON.stringify(cart));
+            return;
         }
-        // console.log("le produit n'existe PAS, j'ajoute dans le locale storage");
-        cart.push(cartProduct);
-        localStorage.setItem('Cart', JSON.stringify(cart));
     }
+    // console.log("le produit n'existe PAS, j'ajoute dans le locale storage");
+    cart.push(cartProduct);
+    localStorage.setItem('Cart', JSON.stringify(cart));
+}
 
 
 

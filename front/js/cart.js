@@ -1,7 +1,7 @@
 let cartSelectItem = document.querySelector('#cart__items');
 let selectTotalQuantity = document.querySelector('#totalQuantity');
 let selectTotalPrice = document.querySelector('#totalPrice');
-let cart = JSON.parse(localStorage.getItem('Cart') || []);
+let cart = JSON.parse(localStorage.getItem('Cart')) || [];
 let mQuantity = document.getElementsByClassName('itemQuantity');
 let quantityTotal = 0;
 let priceTotal = 0;
@@ -12,14 +12,14 @@ addInsertCart();
 async function addInsertCart() {
   for (let i = 0; i < cart.length; i++) {
     quantityTotal += cart[i].quantity;
+    
     await apiCall(i);
-
     modQuantity();
     deleteItem();
   }
 }
 
-// Appel de l'API avec insertion des donnees du localStorage et de l'API
+// Appel de l'API avec insertion des données du localStorage et de l'API
 async function apiCall(i) {
   let response = await fetch(`http://localhost:3000/api/products/${cart[i].id}/`);
   if (response.ok) {
@@ -70,12 +70,14 @@ function modQuantity() {
         if (cart[i].id === articleId && cart[i].color === articleColor) {
           cart[i].quantity = modifyQuantity;
           localStorage.setItem('Cart', JSON.stringify(cart));
+          location.reload();
           return;
         }
       }
     })
   }
 }
+
 // fonction qui sert à supprimer un produit du panier 
 function deleteItem() {
   let deleteItems = document.querySelectorAll('.deleteItem');
@@ -84,20 +86,19 @@ function deleteItem() {
     deleteIt.addEventListener('click', event => {
       let articleId = event.target.closest("article").dataset.id;
       let articleColor = event.target.closest("article").dataset.color;
-
       let newCart = cart.filter(el => el.id != articleId || el.color != articleColor);
       cart = newCart;
 
       localStorage.setItem('Cart', JSON.stringify(cart));
       event.target.closest("article").remove();
-
+      location.reload();
     })
   }
 }
 
 //----------------------------------------------------------Formulaire----------------------------------------------------------------//
 
-// fonction qui permet de verifier à l'aide du regex que l'utilisateur entre bien un prenom mail valide
+// fonction qui permet de verifier à l'aide du regex que l'utilisateur entre bien un prenom valide
 function checkFirstName() {
   let nameRegExp = new RegExp("^[A-Za-z \é\è\ê\-]+$");
   if (nameRegExp.test(firstName.value)) {
@@ -198,34 +199,38 @@ email.addEventListener("change", () => {
 });
 
 // Verifie que tout les champs sont valide lorsque l'utilisateur clique sur le bouton commande
-let order = document.querySelector('#order');
-order.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (checkFirstName(firstName) && checklastName(lastName) && checkAddress(address) && checkCity(city) && checkEmail(email)) {
-    // creer un objet contact avec les information recuperer a l'aide du formulaire
-    let contact = {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      address: address.value,
-      city: city.value,
-      email: email.value
-    };
-    // creer un tableau products et parcourir le locastorage pour extraire l'id.
-    let products = [];
-    for (let i = 0; i < cart.length; i++) {
-      products.push(cart[i].id);
-    }
-    // Execution de la fonction api POST avec comme paramètres contact et products
-    apiPost({
-      contact,
-      products
-    });
-  } else {
-    // pas valide
-  }
+function submit() {
+  let order = document.querySelector('#order');
+  order.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (checkFirstName(firstName) && checklastName(lastName) && checkAddress(address) && checkCity(city) && checkEmail(email)) {
+      // creer un objet contact avec les information récuperer à l'aide du formulaire
+      let contact = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      };
+      // creer un tableau products et parcourir le locastorage pour extraire l'id.
+      let products = [];
+      for (let i = 0; i < cart.length; i++) {
+        products.push(cart[i].id);
+      }
+      console.log(products)
+      // Execution de la fonction api POST avec comme paramètres contact et products
+      apiPost({
+        contact,
+        products
+      });
+    } else {
 
-});
- // Envoi les données contact et products à l'aide de la methode POST
+    }
+  });
+}
+submit();
+
+// Envoi les données contact et products à l'aide de la methode POST
 async function apiPost(contact, products) {
   let res = await fetch("http://localhost:3000/api/products/order", {
     method: "POST",
@@ -242,8 +247,6 @@ async function apiPost(contact, products) {
   } else {
     console.error('Un probléme est survenu, retour du serveur: ', res.status)
   }
-
 }
-
 
 
