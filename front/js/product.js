@@ -58,12 +58,12 @@ function addProductStorage(cartProduct) {
 
     // creation d'un tableau panier pour y stocker les produits
     let cart = JSON.parse(localStorage.getItem('Cart')) || [];
-    console.log(cart);
+    // console.log(cart);
 
     for (let i = 0; i < cart.length; i++) {
-
+            // test si le produit existe deja
         if (cartProduct.id === cart[i].id && cartProduct.color === cart[i].color) {
-            // console.log("le produit existe deja ");
+            // si le produit existe deja modifie la quantité avant de l'ajouter 
             cart[i].quantity += cartProduct.quantity;
             // console.log(cart);
             localStorage.setItem('Cart', JSON.stringify(cart));

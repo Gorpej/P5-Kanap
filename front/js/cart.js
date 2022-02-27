@@ -12,7 +12,7 @@ addInsertCart();
 async function addInsertCart() {
   for (let i = 0; i < cart.length; i++) {
     quantityTotal += cart[i].quantity;
-    
+
     await apiCall(i);
     modQuantity();
     deleteItem();
@@ -87,6 +87,7 @@ function deleteItem() {
       let articleId = event.target.closest("article").dataset.id;
       let articleColor = event.target.closest("article").dataset.color;
       let newCart = cart.filter(el => el.id != articleId || el.color != articleColor);
+      console.log(newCart)
       cart = newCart;
 
       localStorage.setItem('Cart', JSON.stringify(cart));
@@ -163,7 +164,7 @@ let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
 
 // Ecoute ce que l'utilisateur entre dans le champ prénom
 firstName.addEventListener("change", () => {
-  checkFirstName(this);
+  checkFirstName();
 });
 
 let lastName = document.querySelector('#lastName');
@@ -171,7 +172,7 @@ let lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
 
 // Ecoute ce que l'utilisateur entre dans le champ nom
 lastName.addEventListener("change", () => {
-  checklastName(this);
+  checklastName();
 });
 
 let address = document.querySelector('#address');
@@ -179,7 +180,7 @@ let addressErrorMsg = document.querySelector('#addressErrorMsg');
 
 // Ecoute ce que l'utilisateur entre dans le champ adresse
 address.addEventListener("change", () => {
-  checkAddress(this);
+  checkAddress();
 });
 
 let city = document.querySelector('#city');
@@ -187,7 +188,7 @@ let cityErrorMsg = document.querySelector('#cityErrorMsg');
 
 // Ecoute ce que l'utilisateur entre dans le champ ville
 city.addEventListener("change", () => {
-  checkCity(this);
+  checkCity();
 });
 
 let email = document.querySelector('#email');
@@ -195,7 +196,7 @@ let emailErrorMsg = document.querySelector('#emailErrorMsg');
 
 // Ecoute ce que l'utilisateur entre dans le champ email
 email.addEventListener("change", () => {
-  checkEmail(this);
+  checkEmail();
 });
 
 // Verifie que tout les champs sont valide lorsque l'utilisateur clique sur le bouton commande
